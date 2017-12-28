@@ -1,0 +1,48 @@
+{
+  "name": "npm",
+  "version": "1.0.0",
+  "description": "a simple master slave scroller",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-dev-server",
+    "build": "webpack --progress --colors --p",
+    "transpile": "node_modules/.bin/babel src/MasterSlaveScroll.js --presets babel-preset-env --out-file lib/MasterSlaveScroll.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AshwinDfd/react-master-slave-scroll.git"
+  },
+  "keywords": [
+    "react master slave scroll",
+    "react master slave scroller",
+    "master slave scroll",
+    "master slave scroller",
+    "flipkart scroller",
+    "flipkart like scroller"
+  ],
+  "author": "Ashwin Rai <ashwinrainu@gmail.com> (ashwinrai.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AshwinDfd/react-master-slave-scroll/issues"
+  },
+  "homepage": "https://github.com/AshwinDfd/react-master-slave-scroll#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "css-loader": "^0.28.7",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "prop-types": "^15.6.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "style-loader": "^0.19.1",
+    "webpack": "^3.10.0"
+  },
+  "dependencies": {}
+}
