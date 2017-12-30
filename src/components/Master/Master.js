@@ -19,9 +19,9 @@ class Master extends Component {
 
         let style = {
             width: "calc(100% - "+ slaveWidthPx +"px)",
-            position: "absolute",
-            right: (fixRight)?"auto": 0,
-            left: (fixRight)?0: "auto",
+            position: "relative",
+            right: 0,
+            left: (fixRight)?0: slaveWidthPx,
             top: 0,
             boxSizing: "border-box"
         };

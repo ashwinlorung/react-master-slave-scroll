@@ -10,9 +10,11 @@ class MasterSlaveScroll extends Component {
         this.didScrollY = false;
         this.prevScrollY = 0;
         this.prevScrollX = 0;
+        this.topGutter = 0;
 
         this.state = {
             slaveHeightPx: null,
+            slaveTop: 0,
             innerSlaveTop: 0,
             innerSlaveLeft: 0
         };
@@ -21,9 +23,7 @@ class MasterSlaveScroll extends Component {
     }
 
     componentWillMount () {
-        const {fixRight} = this.props;
 
-        this.slaveLeft = (fixRight)?"auto":0;
     }
 
     componentDidMount () {
@@ -34,25 +34,15 @@ class MasterSlaveScroll extends Component {
     }
 
     setSlaveHeight = () => {
-        const {height, toListenWindowScroll} = this.props;
 
-        if(height && !toListenWindowScroll){
-            this.setState({
-                slaveHeightPx: this.viewportRef.clientHeight
-            });
-        }
+        this.setState({
+            slaveHeightPx: "calc(100vh - "+ this.viewportRef.offsetTop + "px)"
+        });
+        this.topGutter = this.viewportRef.offsetTop;
     };
 
     bindScrollYListener = () => {
-        const {toListenWindowScroll} = this.props;
-
-        if (toListenWindowScroll) {
-            window.addEventListener("scroll", this.handleScrollY);
-            this.viewportHeight = window.innerHeight;
-        }else{
-            this.viewportRef.addEventListener("scroll", this.handleScrollY);
-            this.viewportHeight = this.viewportRef.clientHeight;
-        }
+        window.addEventListener("scroll", this.handleScrollY);
     };
 
     handleScrollY = () => {
@@ -70,32 +60,59 @@ class MasterSlaveScroll extends Component {
     };
 
     onDidScrollY = () => {
-        const {toListenWindowScroll, onScrollY} = this.props;
-        let scrollY = (toListenWindowScroll)?window.scrollY:this.viewportRef.scrollTop;
+        let scrollY = window.scrollY;
 
         if(scrollY === this.prevScrollY){
             return;
         }
 
-        const innerSlaveTop = parseInt(this.state.innerSlaveTop);
+        const {slaveTop} = this.state,
+            {onScrollY} = this.props
+        ;
+
+        const innerSlaveTop = this.state.innerSlaveTop;
         let isScrollDown = (scrollY > this.prevScrollY),
             scrollDiff = scrollY - this.prevScrollY,
-            // innerSlaveTop = this.innerSlaveRef.offsetTop,
-            newInnerSlaveTop = 0
+            newInnerSlaveTop = 0,
+            newSlaveTop = 0,
+            viewportHeight = window.innerHeight,
+            slaveScrollHeight = this.innerSlaveRef.scrollHeight,
+            slaveOffsetHeight = this.innerSlaveRef.offsetHeight,
+            remainingMasterToScroll = this.masterRef.scrollHeight - scrollY - viewportHeight
         ;
 
         this.prevScrollY = scrollY;
 
-        if(isScrollDown && (-innerSlaveTop + this.viewportHeight < this.innerSlaveRef.offsetHeight) ){
-            newInnerSlaveTop = ((this.innerSlaveRef.scrollHeight + innerSlaveTop - scrollDiff - this.viewportHeight <= 0)? -(this.innerSlaveRef.scrollHeight - this.viewportHeight): (innerSlaveTop -scrollDiff))  + "px";
-            this.setState({
-                innerSlaveTop: newInnerSlaveTop
-            });
-        }else if(!isScrollDown && innerSlaveTop < 0){
-            newInnerSlaveTop = (( (innerSlaveTop -scrollDiff) > 0 )?0:innerSlaveTop -scrollDiff) + "px";
-            this.setState({
-                innerSlaveTop: newInnerSlaveTop
-            });
+        if(isScrollDown){
+            if(-innerSlaveTop + viewportHeight < slaveOffsetHeight + this.topGutter){
+                newInnerSlaveTop = (
+                    (slaveScrollHeight + innerSlaveTop - scrollDiff - viewportHeight  + this.topGutter <= 0)
+                        ? -(slaveScrollHeight - viewportHeight + this.topGutter)
+                        : (innerSlaveTop -scrollDiff)
+                    )
+                ;
+                this.setState({
+                    innerSlaveTop: newInnerSlaveTop
+                });
+            }else if(remainingMasterToScroll < 0){
+                newSlaveTop = newSlaveTop + (remainingMasterToScroll + this.topGutter);
+                this.setState({
+                    slaveTop: newSlaveTop
+                });
+            }
+        }else if(!isScrollDown){
+            if( slaveTop < 0){
+                newSlaveTop = (slaveTop - scrollDiff > 0)?0:(slaveTop - scrollDiff);
+                this.setState({
+                    slaveTop: newSlaveTop
+                });
+            }else if(innerSlaveTop < 0){
+                newInnerSlaveTop = (( (innerSlaveTop -scrollDiff) > 0 )?0:innerSlaveTop -scrollDiff);
+                this.setState({
+                    innerSlaveTop: newInnerSlaveTop
+                });
+            }
+
         }
 
         onScrollY({scrollY, scrollDiff});
@@ -116,25 +133,19 @@ class MasterSlaveScroll extends Component {
     };
 
     bindScrollXListener = () => {
-        const {toListenWindowScroll} = this.props;
-
-        if(toListenWindowScroll){
-            window.addEventListener("scroll", this.handleScrollX);
-        }else{
-            this.viewportRef.addEventListener("scroll", this.handleScrollX);
-        }
+        window.addEventListener("scroll", this.handleScrollX);
     };
 
     handleScrollX () {
-        const {toListenWindowScroll, onScrollX} = this.props;
-        let scrollX = (toListenWindowScroll)?window.scrollX:this.viewportRef.scrollLeft;
+        const {onScrollX} = this.props;
+        let scrollX = window.scrollX;
         if(scrollX === this.prevScrollX){
             return;
         }
 
         this.prevScrollX = scrollX;
         this.setState({
-            innerSlaveLeft: -scrollX + "px"
+            innerSlaveLeft: -scrollX
         });
 
         onScrollX();
@@ -145,13 +156,12 @@ class MasterSlaveScroll extends Component {
                 minWidthPx,
                 maxWidthPx,
                 slaveWidthPx,
-                toListenWindowScroll,
                 scrollAnimDuration,
                 fixRight,
-                height,
                 children
             } = this.props,
             {
+                slaveTop,
                 slaveHeightPx,
                 innerSlaveTop,
                 innerSlaveLeft
@@ -162,9 +172,7 @@ class MasterSlaveScroll extends Component {
         let style={
             minWidth: minWidthPx,
             maxWidth: maxWidthPx,
-            position: "relative",
-            height: (toListenWindowScroll)?"auto":height,
-            overflow: (toListenWindowScroll)?"":"auto"
+            position: "relative"
         };
 
         return (
@@ -179,6 +187,7 @@ class MasterSlaveScroll extends Component {
                         const childProps = {
                             slaveWidthPx: slaveWidthPx,
                             slaveHeightPx: slaveHeightPx,
+                            slaveTop: slaveTop,
                             slaveLeft: this.slaveLeft,
                             fixRight: fixRight,
                             innerSlaveTop: innerSlaveTop,
@@ -201,7 +210,6 @@ MasterSlaveScroll.propTypes = {
     slaveWidthPx: PropTypes.number.isRequired,
     toListenWindowScroll: PropTypes.bool,
     top: PropTypes.number,
-    height: PropTypes.string,
     scrollYListenTimer: PropTypes.number,
     scrollAnimDuration: PropTypes.number,
     onScrollY: PropTypes.func,
@@ -212,9 +220,8 @@ MasterSlaveScroll.defaultProps = {
     minWidthPx: "auto",
     toListenWindowScroll: true,
     fixRight: false,
-    height: "100%",
-    scrollYListenTimer: 50,
-    scrollAnimDuration: 0.2,
+    scrollYListenTimer: 25,
+    scrollAnimDuration: 0.05,
     onScrollY: ()=>{},
     onScrollX: ()=>{}
 };

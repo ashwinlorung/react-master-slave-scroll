@@ -1,13 +1,13 @@
 {
-  "name": "npm",
-  "version": "1.0.0",
+  "name": "react-master-slave-scroll",
+  "version": "0.0.1",
   "description": "a simple master slave scroller",
-  "main": "index.js",
+  "main": "lib/MasterSlaveScroll.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server",
     "build": "webpack --progress --colors --p",
-    "transpile": "node_modules/.bin/babel src/MasterSlaveScroll.js --presets babel-preset-env --out-file lib/MasterSlaveScroll.js"
+    "transpile": "node_modules/.bin/babel src --presets=babel-preset-es2015 --plugins=babel-plugin-transform-class-properties --out-dir lib/ --ignore index.js"
   },
   "repository": {
     "type": "git",

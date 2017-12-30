@@ -16,15 +16,16 @@ class Slave extends Component {
     }
 
     render () {
-        const {slaveWidthPx, slaveHeightPx, innerSlaveTop, innerSlaveLeft,
-            slaveLeft, scrollAnimDuration
+        const {slaveWidthPx, fixRight, slaveHeightPx, innerSlaveTop, innerSlaveLeft,
+            slaveTop, scrollAnimDuration
         } = this.props;
 
         let styles = {
             width: slaveWidthPx,
             height: slaveHeightPx,
             position: "fixed",
-            marginLeft: slaveLeft,
+            transform: "translateY("+slaveTop+"px)",
+            marginLeft: (fixRight)?"calc(100% - "+ slaveWidthPx +"px)":0,
             overflow: "hidden",
             boxSizing: "border-box"
         };
@@ -34,8 +35,7 @@ class Slave extends Component {
             boxSizing: "border-box",
             transition: "transform "+ scrollAnimDuration +"s linear",
             left: innerSlaveLeft,
-            transform: "translateY("+innerSlaveTop+")"
-            // top: slaveTop
+            transform: "translateY("+innerSlaveTop+"px)"
         };
 
         return (
