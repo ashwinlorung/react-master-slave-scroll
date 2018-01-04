@@ -54,11 +54,15 @@ ReactDOM.render(
 
 #### minWidthPx: number
 
-Set `min-width` attribute to msaterslavesroll component.
+Set `min-width` attribute to MasterSlaveScroll component.
 
-#### slaveWidthPx: number
+#### slaveWidthPx: number, required
 
 Set `width` attribute to slave component.
+
+#### fixRight: bool
+
+Fix the slave to right. By default it is false
 
 #### scrollYListenTimer: number
 
