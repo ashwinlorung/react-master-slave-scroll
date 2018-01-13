@@ -7,7 +7,7 @@ A Demo is available [here](http://ashwinrai.com/work/MasterSlaveScrollDemo/Maste
 
 ## Installation
 
-1. Install `react-master-slave-scroll` using npm (or [yarn]). `npm install react-master-slave-scroll`
+1. Install `react-master-slave-scroll` using npm. `npm install react-master-slave-scroll`
 2. Import `react-master-slave-scroll` to use `MasterSlaveScroll, Master and Slave` components.
 
 ## Usage
@@ -80,8 +80,6 @@ This function is called on vertical scroll.
 
 This function is called on horizontal scroll.
 
+### Future scope
 
-
-Contributions are welcome. :)
-
-[yarn]: https://yarnpkg.com/
+Working on it to make it more robust and configurable.
